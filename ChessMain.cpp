@@ -136,7 +136,7 @@ public:
     return side;
   }
 
-  bool checkMove(Field* (&chessField)[8][8], int x, int y){
+  bool validateMove(Field* (&chessField)[8][8], int x, int y){
     if(positionX != x && positionY != y) return false;
     // Moving on x axis, y is fixed
     if(positionX != x){
@@ -167,11 +167,17 @@ public:
         }
       }
     }
-    positionX = x;
-    positionY = y;
     return true;
   }
 
+  bool checkMove(Field* (&chessField)[8][8], int x, int y){
+    if(validateMove(chessField, x, y)){
+      positionX = x;
+      positionY = y;
+      return true;
+    }
+    return false;
+  }
 };
 
 class Bishop : public Field{
@@ -201,39 +207,122 @@ public:
     return side;
   }
 
+  bool validateMove(Field* (&chessField)[8][8], int x, int y){
+    if(positionX == x || positionY == y) return false;
+    if(abs(positionX - x) != abs(positionY - y)) return false;
+
+    if(positionX - 1 > x && positionY - 1 > y){
+      for(int i = 1; i < positionX - x; i++){
+        if (chessField[positionX - i][positionY - i]->getSquare() != ' ') return false;
+      }
+    }
+
+    if(positionX + 1 < x && positionY - 1 > y){
+      for(int i = 1; i < x - positionX; i++){
+        if (chessField[positionX + i][positionY - i]->getSquare() != ' ') return false;
+      }
+    }
+
+    if(positionX + 1 < x && positionY + 1 < y){
+      for(int i = 1; i < x - positionX; i++){
+        if (chessField[positionX + i][positionY + i]->getSquare() != ' ') return false;
+      }
+    }
+
+    if(positionX - 1 > x && positionY + 1 < y){
+      for(int i = 1; i < positionX - x; i++){
+        if (chessField[positionX - i][positionY + i]->getSquare() != ' ') return false;
+      }
+    }
+    return true;
+  }
+
   bool checkMove(Field* (&chessField)[8][8], int x, int y){
-      if(positionX == x || positionY == y) return false;
-      if(abs(positionX - x) != abs(positionY - y)) return false;
-
-      if(positionX - 1 > x && positionY - 1 > y){
-        for(int i = 1; i < positionX - x; i++){
-          if (chessField[positionX - i][positionY - i]->getSquare() != ' ') return false;
-        }
-      }
-
-      if(positionX + 1 < x && positionY - 1 > y){
-        for(int i = 1; i < x - positionX; i++){
-          if (chessField[positionX + i][positionY - i]->getSquare() != ' ') return false;
-        }
-      }
-
-      if(positionX + 1 < x && positionY + 1 < y){
-        for(int i = 1; i < x - positionX; i++){
-          if (chessField[positionX + i][positionY + i]->getSquare() != ' ') return false;
-        }
-      }
-
-      if(positionX - 1 > x && positionY + 1 < y){
-        for(int i = 1; i < positionX - x; i++){
-          if (chessField[positionX - i][positionY + i]->getSquare() != ' ') return false;
-        }
-      }
-
+    if(validateMove(chessField, x, y)){
       positionX = x;
       positionY = y;
       return true;
+    }
+    return false;
+  }
+};
+
+class Knight : public Field{
+private:
+  int positionX = 0;
+  int positionY = 0;
+  char square = ' ';
+  char side = ' ';
+  bool firstMove = true;
+  bool eaten = false;
+
+public:
+  Knight(int x, int y, char side, char square) :
+    positionX(x),
+    positionY(y),
+    side(side),
+    square(square)
+  {
+
   }
 
+  char getSquare(){
+    return square;
+  }
+
+  char getSide(){
+    return side;
+  }
+
+  bool checkMove(Field* (&chessField)[8][8], int x, int y){
+    if(abs(positionX - x) > 2 || abs(positionY - y) > 2) return false;
+    if(abs(positionX - x) >= 2 && abs(positionY - y) >= 2) return false;
+    if(abs(positionX - x) == abs(positionY - y)) return false;
+    if(positionX == x || positionY == y) return false;
+
+    positionX = x;
+    positionY = y;
+    return true;
+  }
+};
+
+class Queen : public Field{
+private:
+  int positionX = 0;
+  int positionY = 0;
+  char square = ' ';
+  char side = ' ';
+  bool firstMove = true;
+  bool eaten = false;
+
+public:
+  Queen(int x, int y, char side, char square) :
+    positionX(x),
+    positionY(y),
+    side(side),
+    square(square)
+  {
+
+  }
+
+  char getSquare(){
+    return square;
+  }
+
+  char getSide(){
+    return side;
+  }
+
+  bool checkMove(Field* (&chessField)[8][8], int x, int y){
+    Rook tmpRook(positionX, positionY, 'a', 'a');
+    Bishop tmpBishop(positionX, positionY, 'a', 'a');
+    if(tmpRook.validateMove(chessField, x, y) || tmpBishop.validateMove(chessField, x, y)){
+      positionX = x;
+      positionY = y;
+      return true;
+    }
+    return false;
+  }
 };
 
 //*****************************************************************************
@@ -257,6 +346,14 @@ void initializeBoard(Field* (&chessField)[8][8]){
   chessField[0][5] = new Bishop(0, 5, 'w', 'b');
   chessField[7][2] = new Bishop(7, 2, 'w', 'B');
   chessField[7][5] = new Bishop(7, 5, 'w', 'B');
+
+  chessField[7][1] = new Knight(7, 1, 'w', 'K');
+  chessField[7][6] = new Knight(7, 6, 'w', 'K');
+  chessField[0][1] = new Knight(0, 1, 'b', 's');
+  chessField[0][6] = new Knight(0, 6, 'b', 's');
+
+  chessField[7][4] = new Queen(7, 4, 'w', 'Q');
+  chessField[0][4] = new Queen(0, 4, 'b', 'q');
 
   for(int i = 0; i < 8; i++){
     for(int j = 0; j < 8; j++){
@@ -299,7 +396,7 @@ int main(){
       std::swap(chessField[x][y], chessField[xx][yy]);
       chessField[x][y] = new EmptySquare();
     }
-    //system("cls");
+    system("cls");
   }
 
 }
