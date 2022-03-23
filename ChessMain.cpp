@@ -367,11 +367,18 @@ void initializeBoard(Field* (&chessField)[8][8]){
 // Drawing the board on screen
 void drawBoard(Field* (&chessField)[8][8]){
   for(int i = 0; i < 8; i++){
+    std::cout<<i<<"|";
     for(int j = 0; j < 8; j++){
       std::cout<<"  "<<chessField[i][j]->getSquare();
     }
-    std::cout<<"\n\n";
+    if(i == 7){
+      std::cout<<"\n |";
+      break;
+    }
+    std::cout<<"\n |\n";
   }
+  std::cout<<"_________________________"<<std::endl;
+  std::cout<<"    0  1  2  3  4  5  6  7"<<std::endl;
 }
 
 // Move figure by swapping and deleting the swapped figure
