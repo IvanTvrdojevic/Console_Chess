@@ -325,6 +325,41 @@ public:
   }
 };
 
+class King : public Field{
+private:
+  int positionX = 0;
+  int positionY = 0;
+  char square = ' ';
+  char side = ' ';
+  bool firstMove = true;
+  bool eaten = false;
+
+public:
+  King(int x, int y, char side, char square) :
+    positionX(x),
+    positionY(y),
+    side(side),
+    square(square)
+  {
+
+  }
+
+  char getSquare(){
+    return square;
+  }
+
+  char getSide(){
+    return side;
+  }
+
+  bool checkMove(Field* (&chessField)[8][8], int x, int y){
+  if(abs(positionX - x) > 1 || abs(positionY - y) > 1) return false;
+  positionX = x;
+  positionY = y;
+  return true;
+  }
+};
+
 //*****************************************************************************
 
 //*****************************************************************************
@@ -347,17 +382,21 @@ void initializeBoard(Field* (&chessField)[8][8]){
   chessField[7][2] = new Bishop(7, 2, 'w', 'B');
   chessField[7][5] = new Bishop(7, 5, 'w', 'B');
 
-  chessField[7][1] = new Knight(7, 1, 'w', 'K');
-  chessField[7][6] = new Knight(7, 6, 'w', 'K');
+  chessField[7][1] = new Knight(7, 1, 'w', 'k');
+  chessField[7][6] = new Knight(7, 6, 'w', 'k');
   chessField[0][1] = new Knight(0, 1, 'b', 's');
   chessField[0][6] = new Knight(0, 6, 'b', 's');
 
   chessField[7][4] = new Queen(7, 4, 'w', 'Q');
   chessField[0][4] = new Queen(0, 4, 'b', 'q');
 
+  chessField[7][3] = new King(7, 3, 'w', 'K');
+  chessField[0][3] = new King(0, 3, 'b', 'G');
+
   for(int i = 0; i < 8; i++){
     for(int j = 0; j < 8; j++){
       //napravi ovo sa switch-case-om
+
       if(i == 1) chessField[i][j] = new Pawn(i, j, 'b', 'p');
       else if(i == 6) chessField[i][j] = new Pawn(i, j, 'w', 'D');
     }
