@@ -144,6 +144,10 @@ public:
   }
 
   bool validateMove(Field* (&chessField)[8][8], int x, int y){
+    // Rooks can only move horizontally and vertically so either x or y
+    // has to be fixed in place
+    // If there is a non empty field between current and next position
+    // then the move is illegal
     if(positionX != x && positionY != y) return false;
     // Moving on x axis, y is fixed
     if(positionX != x){
@@ -215,27 +219,36 @@ public:
   }
 
   bool validateMove(Field* (&chessField)[8][8], int x, int y){
+    // Bishop moves diagonally so both x and y have to change and
+    // the difference has to be the same
+    // If there is a non empty field between current and next position
+    // then the move is illegal
+    // Since the bishop moves diagonally we have to check 4 cases
     if(positionX == x || positionY == y) return false;
     if(abs(positionX - x) != abs(positionY - y)) return false;
 
+    // case 1 -> left and down
     if(positionX - 1 > x && positionY - 1 > y){
       for(int i = 1; i < positionX - x; i++){
         if (chessField[positionX - i][positionY - i]->getSquare() != ' ') return false;
       }
     }
 
+    // case 2 -> left and up
     if(positionX + 1 < x && positionY - 1 > y){
       for(int i = 1; i < x - positionX; i++){
         if (chessField[positionX + i][positionY - i]->getSquare() != ' ') return false;
       }
     }
 
+    // case 3 -> right and up
     if(positionX + 1 < x && positionY + 1 < y){
       for(int i = 1; i < x - positionX; i++){
         if (chessField[positionX + i][positionY + i]->getSquare() != ' ') return false;
       }
     }
 
+    // case 4 -> left and up
     if(positionX - 1 > x && positionY + 1 < y){
       for(int i = 1; i < positionX - x; i++){
         if (chessField[positionX - i][positionY + i]->getSquare() != ' ') return false;
@@ -282,6 +295,9 @@ public:
   }
 
   bool checkMove(Field* (&chessField)[8][8], int x, int y){
+    // Knight can jump over pieces so no need to check for that
+    // Knight can move 2 squares vertically and 1 square horizontally or
+    // 2 squares horizontally and 1 square vertically
     if(abs(positionX - x) > 2 || abs(positionY - y) > 2) return false;
     if(abs(positionX - x) >= 2 && abs(positionY - y) >= 2) return false;
     if(abs(positionX - x) == abs(positionY - y)) return false;
@@ -321,6 +337,7 @@ public:
   }
 
   bool checkMove(Field* (&chessField)[8][8], int x, int y){
+    // The Queen combines Rooks and Bishops movement
     Rook tmpRook(positionX, positionY, 'a', 'a');
     Bishop tmpBishop(positionX, positionY, 'a', 'a');
     if(tmpRook.validateMove(chessField, x, y) || tmpBishop.validateMove(chessField, x, y)){
@@ -360,6 +377,8 @@ public:
   }
 
   bool checkMove(Field* (&chessField)[8][8], int x, int y){
+  // The King moves up by only one square, no checks for checks or
+  // check mates, so the King can move freely right now
   if(abs(positionX - x) > 1 || abs(positionY - y) > 1) return false;
   positionX = x;
   positionY = y;
@@ -402,8 +421,6 @@ void initializeBoard(Field* (&chessField)[8][8]){
 
   for(int i = 0; i < 8; i++){
     for(int j = 0; j < 8; j++){
-      //napravi ovo sa switch-case-om
-
       if(i == 1) chessField[i][j] = new Pawn(i, j, 'b', 'p');
       else if(i == 6) chessField[i][j] = new Pawn(i, j, 'w', 'D');
     }
@@ -426,10 +443,6 @@ void drawBoard(Field* (&chessField)[8][8]){
   std::cout<<"_________________________"<<std::endl;
   std::cout<<"    0  1  2  3  4  5  6  7"<<std::endl;
 }
-
-// Move figure by swapping and deleting the swapped figure
-// by setting swapped field to EmptyField
-
 
 //*****************************************************************************
 
@@ -463,7 +476,7 @@ public:
 class derived : public base{
 public:
   void print(){
-    std::cout<<"joj"<<std::endl;
+    std::cout<<"derived print"<<std::endl;
   }
 };
 
@@ -475,7 +488,7 @@ void printaj(base* (&baseptr)[3][3]){
       baseptr[i][j]->print();
     }
   }
-  std::cout<<"userem se"<<std::endl;
+  std::cout<<"print"<<std::endl;
 }
 
 int main()
