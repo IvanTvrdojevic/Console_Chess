@@ -2,6 +2,13 @@
 #include <string>
 #include "conio.h"
 
+/*
+  This project is a work in progress
+  To do
+    Code organization -> header and .cpp files
+    Check for check and check mate
+*/
+
 //*****************************************************************************
 // CLASES
 // Abstract class
