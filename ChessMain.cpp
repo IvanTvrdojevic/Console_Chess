@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
-#include "conio.h"
+
+
+
 
 /*
   This project is a work in progress
@@ -12,6 +14,7 @@
 //*****************************************************************************
 // CLASES
 // Abstract class
+
 class Field{
 private:
 
@@ -20,6 +23,7 @@ public:
   virtual bool checkMove(Field* (&chessField)[8][8], int x, int y) = 0;
   virtual char getSide() = 0;
 };
+
 
 // Squares with no figures
 class EmptySquare : public Field{
@@ -460,6 +464,7 @@ int main(){
     std::cin >> xx >> yy;
     if(chessField[x][y]->checkMove(chessField, xx, yy)){
       std::swap(chessField[x][y], chessField[xx][yy]);
+      delete(chessField[x][y]);
       chessField[x][y] = new EmptySquare();
     }
     system("cls");
